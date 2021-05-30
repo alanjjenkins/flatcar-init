@@ -1,0 +1,10 @@
+#!/bin/bash
+pacman -Sy wget --noconfirm
+wget https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/flatcar-install
+chmod +x flatcar-install
+./flatcar-install -s -C alpha
+mkdir /tmp/b
+mount /dev/sda1 /tmp/b
+cd /tmp/b/boot/flatcar/
+cp grub.cfg.tar grub.cfg.tar.orig
+tar xvf grub.cfg.tar
