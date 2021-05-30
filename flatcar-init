@@ -12,7 +12,7 @@ chmod +x flatcar-install
 ./flatcar-install -s -C alpha
 mkdir /tmp/b
 mount /dev/sda1 /tmp/b
-cd /tmp/b/flatcar/boot/
+cd /tmp/b/flatcar/grub/
 cp grub.cfg.tar grub.cfg.tar.orig
 tar xvf grub.cfg.tar
 
