@@ -8,7 +8,7 @@ wget https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/fla
 chmod +x flatcar-install
 ./flatcar-install -s -C alpha
 mkdir /tmp/b
-mount /dev/sda1 /tmp/b
+mount /dev/disk/by-label/EFI-SYSTEM /tmp/b
 cd /tmp/b/flatcar/grub/
 cp grub.cfg.tar grub.cfg.tar.orig
 tar -xv --no-same-owner -f grub.cfg.tar
