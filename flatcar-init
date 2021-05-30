@@ -1,10 +1,21 @@
 #!/bin/bash
+set -euo pipefail
+
+if [ -z ${INTERFACE+x}]; then 
+  echo "INTERFACE envvar is unset. Please set the variable to the name of the NIC to use as the primary."
+  exit 1
+fi
+
 pacman -Sy wget --noconfirm
 wget https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/flatcar-install
 chmod +x flatcar-install
 ./flatcar-install -s -C alpha
 mkdir /tmp/b
 mount /dev/sda1 /tmp/b
-cd /tmp/b/boot/flatcar/
+cd /tmp/b/flatcar/boot/
 cp grub.cfg.tar grub.cfg.tar.orig
 tar xvf grub.cfg.tar
+
+MAC=$(ip a show dev $INTERFACE | awk '/link\/ether/ { print $2; }')
+sed -i "s/linux\$suf \$gptprio_kernel \$gptprio_cmdline \$linux_cmdline$/linux\$suf \$gptprio_kernel \$gptprio_cmdline flatcar.config.url='http://matchbox.lan:8080/ignition?uuid=123&mac=$MAC'/" grub.cfg
+tar cvf grub.cfg.tar grub.cfg
