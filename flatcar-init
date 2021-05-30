@@ -17,5 +17,5 @@ cp grub.cfg.tar grub.cfg.tar.orig
 tar xvf grub.cfg.tar
 
 MAC=$(ip a show dev $INTERFACE | awk '/link\/ether/ { print $2; }')
-sed -i "s/linux\$suf \$gptprio_kernel \$gptprio_cmdline \$linux_cmdline$/linux\$suf \$gptprio_kernel \$gptprio_cmdline flatcar.config.url='http:\/\/matchbox.lan:8080\/ignition?uuid=123&mac=${MAC}'/" grub.cfg
+sed -i "s/linux\$suf \$gptprio_kernel \$gptprio_cmdline \$linux_cmdline$/linux\$suf \$gptprio_kernel \$gptprio_cmdline flatcar.config.url='http:\/\/matchbox.lan:8080\/ignition?uuid=123\&mac=${MAC}'/" grub.cfg
 tar cvf grub.cfg.tar grub.cfg
