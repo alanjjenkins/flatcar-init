@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -euo pipefail
+set -euo pipefail
 
 if [ -z ${INTERFACE+x} ]; then 
   echo "INTERFACE envvar is unset. Please set the variable to the name of the NIC to use as the primary."
@@ -14,8 +14,12 @@ mkdir /tmp/b
 mount /dev/sda1 /tmp/b
 cd /tmp/b/flatcar/grub/
 cp grub.cfg.tar grub.cfg.tar.orig
+set +e
 tar xvf grub.cfg.tar
+set -e
 
 MAC=$(ip a show dev $INTERFACE | awk '/link\/ether/ { print $2; }')
 sed -i "s/linux\$suf \$gptprio_kernel \$gptprio_cmdline \$linux_cmdline$/linux\$suf \$gptprio_kernel \$gptprio_cmdline flatcar.config.url='http:\/\/matchbox.lan:8080\/ignition?uuid=123\&mac=${MAC}'/" grub.cfg
+set +e
 tar cvf grub.cfg.tar grub.cfg
+set -e
