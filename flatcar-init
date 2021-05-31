@@ -1,18 +1,19 @@
 #!/bin/bash
 set -euo pipefail
 
-INTERFACE=$(ip route | awk '/default via/ { print $5; }')
-
 pacman -Sy wget --noconfirm
+INTERFACE=$(ip route | awk '/default via/ { print $5; }')
+MAC=$(ip a show dev $INTERFACE | awk '/link\/ether/ { print $2; }')
+curl -o ignition.json "http://matchbox.lan:8080/ignition?uuid=${uuid}&mac=${MAC}"
 wget https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/flatcar-install
 chmod +x flatcar-install
-./flatcar-install -s -C alpha
-mkdir /tmp/b
-mount /dev/disk/by-label/EFI-SYSTEM /tmp/b
-cd /tmp/b/flatcar/grub/
-cp grub.cfg.tar grub.cfg.tar.orig
-tar -xv --no-same-owner -f grub.cfg.tar
+./flatcar-install -s -C alpha -i ignition.json
 
-MAC=$(ip a show dev $INTERFACE | awk '/link\/ether/ { print $2; }')
-sed -i "s/linux\$suf \$gptprio_kernel \$gptprio_cmdline \$linux_cmdline$/linux\$suf \$gptprio_kernel \$gptprio_cmdline flatcar.config.url='http:\/\/matchbox.lan:8080\/ignition?uuid=123\&mac=${MAC}'/" grub.cfg
-tar -cv --owner=1000 -f grub.cfg.tar grub.cfg 
+# mkdir /tmp/b
+# mount /dev/disk/by-label/EFI-SYSTEM /tmp/b
+# cd /tmp/b/flatcar/grub/
+# cp grub.cfg.tar grub.cfg.tar.orig
+# tar -xv --no-same-owner -f grub.cfg.tar
+# 
+# sed -i "s/linux\$suf \$gptprio_kernel \$gptprio_cmdline \$linux_cmdline$/linux\$suf \$gptprio_kernel \$gptprio_cmdline flatcar.config.url='http:\/\/matchbox.lan:8080\/ignition?uuid=123\&mac=${MAC}'/" grub.cfg
+# tar -cv --owner=1000 -f grub.cfg.tar grub.cfg 
