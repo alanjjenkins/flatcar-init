@@ -6,7 +6,7 @@ INTERFACE=$(ip route | awk '/default via/ { print $5; }')
 MAC=$(ip a show dev $INTERFACE | awk '/link\/ether/ { print $2; }')
 UUID=$(uuidgen)
 
-curl -o ignition.json "http://matchbox.lan:8080/ignition?uuid=${UUID}&mac=${MAC}"
+curl -o ignition.json "http://matchbox.lan:8080/ignition?uuid=${UUID}&mac=${MAC}&os=installed"
 wget https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/flatcar-install
 chmod +x flatcar-install
 ./flatcar-install -s -C alpha -i ignition.json
